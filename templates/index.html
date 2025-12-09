@@ -1,0 +1,78 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-md-12">
+        <div class="card p-3 shadow-sm border-0">
+            <h5 class="mb-3">🔍 Búsqueda y Filtros</h5>
+            <form action="/products" method="GET" class="row g-3">
+                <div class="col-md-3">
+                    <input type="text" name="q" class="form-control" placeholder="Nombre del producto..." value="{{ request.args.get('q', '') }}">
+                </div>
+                <div class="col-md-2">
+                    <input type="text" name="brand" class="form-control" placeholder="Marca del producto..." value="{{ request.args.get('brand', '') }}">
+                </div>
+                <div class="col-md-2">
+                    <select name="category" class="form-select">
+                        <option value="">Todas las categorías</option>
+                        <option value="Cuadernos" {% if request.args.get('category') == 'Cuadernos' %}selected{% endif %}>Cuadernos</option>
+                        <option value="Escritura" {% if request.args.get('category') == 'Escritura' %}selected{% endif %}>Escritura</option>
+                        <option value="Papel" {% if request.args.get('category') == 'Papel' %}selected{% endif %}>Papel</option>
+                        <option value="Arte" {% if request.args.get('category') == 'Arte' %}selected{% endif %}>Arte</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <div class="input-group">
+                        <input type="number" name="min_price" class="form-control" placeholder="Precio Mínimo" value="{{ request.args.get('min_price', '') }}">
+                        <input type="number" name="max_price" class="form-control" placeholder="Precio Máximo" value="{{ request.args.get('max_price', '') }}">
+                    </div>
+                </div>
+                <div class="col-md-2 d-grid">
+                    <button type="submit" class="btn btn-secondary">Buscar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<h5 class="mb-3">Lista de Productos:</h5>
+
+<div class="row row-cols-1 row-cols-md-3 g-4 mb-5">
+    {% for product in products %}
+    <div class="col">
+        <div class="card h-100 shadow-sm border-0">
+            <div style="height: 200px; overflow: hidden; background-color: #fff; display:flex; align-items:center; justify-content:center;">
+                <img src="{{ product.image_url }}" class="card-img-top" alt="{{ product.name }}" style="max-height: 100%; width: auto;">
+            </div>
+            <div class="card-body">
+                <h5 class="card-title text-truncate" title="{{ product.name }}">{{ product.name }}</h5>
+                
+                <h6 class="card-subtitle mb-2 text-muted">
+                    <span class="badge bg-secondary">{{ product.category }}</span> 
+                    <span class="text-primary fw-bold ms-1">{{ product.brand }}</span>
+                </h6>
+                
+                <p class="card-text small text-muted" style="min-height: 40px;">
+                    {{ product.description[:90] }}{% if product.description|length > 90 %}...{% endif %}
+                </p>
+                
+                <div class="d-flex justify-content-between align-items-center mt-3">
+                    <span class="h4 text-success mb-0">Bs. {{ product.price }}</span>
+                    <span class="badge {% if product.stock > 10 %}bg-success{% else %}bg-danger{% endif %} bg-opacity-75">
+                        Stock: {{ product.stock }}
+                    </span>
+                </div>
+            </div>
+            <div class="card-footer bg-white border-top-0 d-flex justify-content-between pb-3">
+                <a href="/products/{{ product._id }}/edit" class="btn btn-outline-warning btn-sm w-50 me-1">✏️ Editar</a>
+                <a href="/products/{{ product._id }}/delete" class="btn btn-outline-danger btn-sm w-50 ms-1">🗑️ Eliminar</a>
+            </div>
+        </div>
+    </div>
+    {% else %}
+    <div class="col-12 text-center py-5">
+        <h3 class="text-muted">No se encontraron productos con esos criterios.</h3>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

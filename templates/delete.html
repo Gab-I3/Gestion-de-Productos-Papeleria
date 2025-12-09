@@ -1,0 +1,13 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="alert alert-danger text-center" role="alert">
+    <h4 class="alert-heading">¿Estás seguro?</h4>
+    <p>Estás a punto de eliminar el producto: <strong>{{ product.name }}</strong></p>
+    <hr>
+    <form action="/products/{{ product._id }}/delete" method="POST">
+        <button type="submit" class="btn btn-danger">Sí, Eliminar Definitivamente</button>
+        <a href="/" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}
